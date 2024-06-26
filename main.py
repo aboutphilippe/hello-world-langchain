@@ -1,5 +1,5 @@
-from flask import Flask, abort, render_template
-from langchain.llms import OpenAI
+from flask import Flask, abort, render_template, jsonify
+from langchain_openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -14,9 +14,13 @@ def main():
 
 @app.route("/ask")
 def ask():
-    llm = OpenAI(temperature=0.7)
-    text = "Tell me a joke about artificial intelligence."
-    return llm(text)
+    try:
+        llm = OpenAI(temperature=0.7)
+        text = "Tell me a joke about artificial intelligence."
+        response = llm(text)
+        return response
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
 
 @app.route("/<path:any_path>")
